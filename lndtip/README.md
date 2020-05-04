@@ -18,12 +18,24 @@ macaroon="ABCD00.."
 
 ## TODO
 
-* implement lnd_client::IntoConnectionInfo to load config
+* [ ] implement server side events
+* [ ] implement lnd_client::IntoConnectionInfo to load config
 
-## Examples
+## Api
 
-http://127.0.0.1:3030/check_invoice?r_hash=abcdef...
-http://127.0.0.1:3030/generate_invoice?satoshi=1000&description=nothing&expiry=0
+* http://127.0.0.1:3030/check_invoice?r_hash=abcdef...
+* http://127.0.0.1:3030/generate_invoice?satoshi=1000&description=nothing&expiry=0
+
+### Links
+
+* https://github.com/seanmonstar/warp/blob/master/examples/todos.rs
+
+## EventSource 
+
+### Links
+
+* https://github.com/seanmonstar/warp/blob/master/examples/sse.rs
+* https://developer.mozilla.org/nl/docs/Web/API/EventSource
 
 
 ## License
