@@ -2,11 +2,13 @@
 
 ## lndtip.toml
 
+```toml
 host="127.0.0.1:10009"
 cert="""-----BEGIN CERTIFICATE-----
 ....
 -----END CERTIFICATE-----"""
 macaroon="ABCD00.."
+```
 
 ## Inspiration
 
