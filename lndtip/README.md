@@ -52,6 +52,26 @@ curl -N   http://127.0.0.1:3030/watchinvoice?r_hash=abcdef...
 * https://github.com/seanmonstar/warp/blob/master/src/filters/sse.rs
 * https://developer.mozilla.org/nl/docs/Web/API/EventSource
 
+## NGINX config
+
+1. Copy the frontend directory to a directory on www server.
+2. Run the lndtip in a tmux session on port 3030
+
+```                                                             
+location /lndtip {                                                                                       
+   rewrite /lndtip/(.*) $1 break;
+   // needed for application/json post
+   proxy_pass_header Content-Type; 
+   // streaming events
+   proxy_set_header Connection '';                                              
+   proxy_http_version 1.1;                                                      
+   chunked_transfer_encoding off;                                               
+   proxy_buffering off;                                                         
+   proxy_cache off;
+   // include querystring
+   proxy_pass http://127.0.0.1:3030/$1$is_args$args;                            
+}                                                                               
+```
 
 ## License
 
