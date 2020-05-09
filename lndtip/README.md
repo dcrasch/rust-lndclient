@@ -57,6 +57,7 @@ curl -N   http://127.0.0.1:3030/watchinvoice?r_hash=abcdef...
 1. Copy the frontend directory to a directory on www server.
 2. Run the lndtip in a tmux session on port 3030
 
+### ldntip.conf
 ```                                                             
 location /lndtip {                                                                                       
    rewrite /lndtip/(.*) $1 break;
