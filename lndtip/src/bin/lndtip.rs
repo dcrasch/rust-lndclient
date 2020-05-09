@@ -46,7 +46,7 @@ async fn main() {
     let lnds = lnd_service::LightningService::new(pool);
     let api = lnd_filters::invoices(lnds);
     let routes = api
-        .with(warp::log("invoices"))
-        .or(warp::path("frontend").and(warp::fs::dir("frontend")));
+        .with(warp::log("invoices"));
+        //.or(warp::path("frontend").and(warp::fs::dir("frontend")));
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
 }
