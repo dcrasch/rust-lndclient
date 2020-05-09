@@ -29,6 +29,16 @@ pub fn invoice_check(
         .and_then(lnd_handlers::status_invoice)
 }
 
+pub fn invoice_watch(
+    ls : lnd_service:LightningService,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!("watchinvoice")
+        .and(warp::get())
+        .and(with_ls(ls))
+        .and_then(lnd_sse:invoice_events)
+}
+
+
 fn with_ls(
     ls: lnd_service::LightningService,
 ) -> impl Filter<Extract = (lnd_service::LightningService,), Error = std::convert::Infallible> + Clone

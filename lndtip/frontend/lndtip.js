@@ -1,6 +1,6 @@
 // Edit this variable if you are not running LightningTip on the same domain or IP address as your webserver or not on port 8081
 // Don't forget the "/" at the end!
-var requestUrl = window.location.protocol + "//" + window.location.hostname + ":3030/";
+var requestUrl = "https://www.hacklab.nl/lndtip/"
 
 // To prohibit multiple requests at the same time
 var requestPending = false;
