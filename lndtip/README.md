@@ -18,13 +18,14 @@ macaroon="ABCD00.."
 
 ## TODO
 
-* [ ] implement server side events
+* [x] implement server side events
 * [ ] implement lnd_client::IntoConnectionInfo to load config
 
 ## Api
 
 * http://127.0.0.1:3030/check_invoice?r_hash=abcdef...
 * http://127.0.0.1:3030/generate_invoice?satoshi=1000&description=nothing&expiry=0
+* http://127.0.0.1:3030/watchinvoice?r_hash=abcdef...
 
 ### Links
 
@@ -32,9 +33,23 @@ macaroon="ABCD00.."
 
 ## EventSource 
 
+Polls the lnd server every 2 seconds, maybe rewrite to using grpc stream?
+Returns
+
+data:
+```json
+{"status":"SETTLED","settled":true,"expiry":3600}
+```
+
+Check streaming with curl
+```shell
+curl -N   http://127.0.0.1:3030/watchinvoice?r_hash=abcdef...
+```
+
 ### Links
 
 * https://github.com/seanmonstar/warp/blob/master/examples/sse.rs
+* https://github.com/seanmonstar/warp/blob/master/src/filters/sse.rs
 * https://developer.mozilla.org/nl/docs/Web/API/EventSource
 
 

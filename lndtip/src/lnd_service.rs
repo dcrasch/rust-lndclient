@@ -69,7 +69,7 @@ pub struct CheckOptions {
     pub r_hash: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct InvoiceStatus {
     pub status: String,
     pub settled: bool,

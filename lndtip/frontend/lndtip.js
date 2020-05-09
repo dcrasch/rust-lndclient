@@ -1,6 +1,6 @@
 // Edit this variable if you are not running LightningTip on the same domain or IP address as your webserver or not on port 8081
 // Don't forget the "/" at the end!
-var requestUrl = window.location.protocol + "//" + window.location.hostname + ":3030/";
+var requestUrl = "/"
 
 // To prohibit multiple requests at the same time
 var requestPending = false;
@@ -137,24 +137,23 @@ function getInvoice() {
 }
 
 function listenInvoiceSettled(rHash) {
-    /* try {
-        var eventSrc = new EventSource(requestUrl + "eventsource");
+    try {
+        var eventSrc = new EventSource(requestUrl + "watchinvoice?r_hash="+encodeURIComponent(rHash));
 
         eventSrc.onmessage = function (event) {
-            if (event.data === rHash) {
+	    var json = JSON.parse(event.data);
+	    
+            if (json.settled) {
                 console.log("Invoice settled");
-
                 eventSrc.close();
-
                 showThankYouScreen();
             }
-
         };
 
     } catch (e) {
         console.error(e);
         console.warn("Your browser does not support EventSource. Sending a request to the server every two second to check if the invoice settled");
-        */
+       
 
         var interval = setInterval(function () {
             if (!requestPending) {
@@ -188,8 +187,7 @@ function listenInvoiceSettled(rHash) {
             }
 
         }, 2000);
-
-   // }
+    }
 
 }
 
