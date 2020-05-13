@@ -1,4 +1,5 @@
 use std::net::SocketAddr;
+use std::pin::Pin;
 use std::sync::Arc;
 
 use grpc::ClientStub;
@@ -9,6 +10,7 @@ use tls_api::TlsConnector;
 use tls_api::TlsConnectorBuilder;
 
 use futures::executor;
+use futures::stream::Stream;
 
 use crate::rpc;
 use crate::rpc_grpc::{LightningClient, WalletUnlockerClient};
@@ -144,6 +146,20 @@ impl LndClient {
         let resp = self
             .lightningclient
             .add_invoice(options, req)
+            .drop_metadata();
+        Ok(executor::block_on(resp)?)
+    }
+
+    pub fn subscribe_invoices(
+        &self,
+        add_index: u64,
+        settle_index: u64,
+    ) -> Result<dyn Stream<Item = Result<rpc::Invoice, Error>> + Send + 'static, Error> {
+        let options = self.request_options();
+        let mut req = rpc::InvoiceSubscription::new();
+        let resp = self
+            .lightningclient
+            .subscribe_invoices(options, req)
             .drop_metadata();
         Ok(executor::block_on(resp)?)
     }

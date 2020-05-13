@@ -49,6 +49,24 @@ impl LightningService {
             settled: false,
         }
     }
+
+    pub fn invoice_stream(&self, r_hash: &str) -> impl Stream<Item = InvoiceStatus> {
+        let conn = self.lnc.get().unwrap();
+        if let Ok(r_hash) = base64::decode(r_hash) {
+            if let Ok(stream) = conn.subscribe_invoices(0, 0) {
+                stream
+                    .filter_map(Result::ok)
+                    .filter(|i| r_hash == i.r_hash)
+                    .map(|invoice| InvoiceStatus {
+                        status: format!("{:?}", invoice.status),
+                        settled: invoice.settled,
+                        expiry: invoice.expiry,
+                    })
+            }
+        } else {
+            stream::empty()
+        }
+    }
 }
 
 #[derive(Deserialize)]
