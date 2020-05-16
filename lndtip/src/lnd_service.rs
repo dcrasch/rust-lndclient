@@ -3,6 +3,10 @@ use r2d2_lndclient::lnd_pool::LightningConnectionManager;
 use r2d2_lndclient::r2d2::Pool;
 use serde::{Deserialize, Serialize};
 
+use futures::prelude::*;
+use tokio::io::Error;
+use r2d2_lndclient::rust_lndclient::rpc::Invoice;
+
 #[derive(Clone)]
 pub struct LightningService {
     lnc: Pool<LightningConnectionManager>,
@@ -37,35 +41,34 @@ impl LightningService {
         if let Ok(r_hash) = base64::decode(r_hash) {
             if let Ok(invoice) = conn.lookup_invoice(r_hash.as_slice()) {
                 return InvoiceStatus {
-                    status: format!("{:?}", invoice.state),
                     settled: invoice.settled,
                     expiry: invoice.expiry,
                 };
             }
         }
         InvoiceStatus {
-            status: "notfound".to_string(),
             expiry: 0,
             settled: false,
         }
     }
 
-    pub fn invoice_stream(&self, r_hash: &str) -> impl Stream<Item = InvoiceStatus> {
+    pub fn invoice_stream(
+        &self,
+        r_hash : Vec<u8>
+    ) -> Result<impl Stream<Item = InvoiceStatus> + Send + Sync, Error> {
         let conn = self.lnc.get().unwrap();
-        if let Ok(r_hash) = base64::decode(r_hash) {
-            if let Ok(stream) = conn.subscribe_invoices(0, 0) {
-                stream
-                    .filter_map(Result::ok)
-                    .filter(|i| r_hash == i.r_hash)
-                    .map(|invoice| InvoiceStatus {
-                        status: format!("{:?}", invoice.status),
-                        settled: invoice.settled,
-                        expiry: invoice.expiry,
-                    })
+        let r_hash = base64::decode(r_hash).unwrap();
+        let response = conn.subscribe_invoices(0, 0);
+        let invoicestream = response.drop_metadata();
+        invoicestream.map_items(f)
+        Ok(
+            invoicestream.map(move|item|{
+                let invoice = item.unwrap();
+            InvoiceStatus {
+                    settled: invoice.settled,
+                    expiry: invoice.expiry,
             }
-        } else {
-            stream::empty()
-        }
+        }))
     }
 }
 
@@ -89,10 +92,10 @@ pub struct CheckOptions {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct InvoiceStatus {
-    pub status: String,
-    pub settled: bool,
     pub expiry: i64,
+    pub settled: bool,
 }
+
 
 #[derive(Deserialize)]
 pub struct InvoiceError {

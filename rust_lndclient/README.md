@@ -42,6 +42,10 @@ Pin<Box<dyn Future<Output = io::Result<Pin<Box<dyn StreamItem + Send>>>> + Send>
 
 Send patch or use https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section
 
+## TODO
+
+[ ] grpc-rust doesn't support sync?? or missing a move or clone somewhere, rewrite to tonic
+
 ## License
 
 Rust lightningnetwork client

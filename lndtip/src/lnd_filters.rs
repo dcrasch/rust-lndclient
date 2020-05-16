@@ -41,6 +41,18 @@ pub fn invoice_watch(
         .and(warp::query::<lnd_service::CheckOptions>())
         .and(with_ls(ls))
         .map(move |c, l| {
+            warp::sse::reply(warp::sse::keep_alive().stream(lnd_sse::invoice_poll(c, l)))
+        })
+}
+
+pub fn invoice_watchmore(
+    ls: lnd_service::LightningService,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!("eventinvoice")
+        .and(warp::get())
+        .and(warp::query::<lnd_service::CheckOptions>())
+        .and(with_ls(ls))
+        .map(move |c, l| {
             warp::sse::reply(warp::sse::keep_alive().stream(lnd_sse::invoice_events(c, l)))
         })
 }
