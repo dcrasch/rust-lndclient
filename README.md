@@ -2,8 +2,8 @@
 
 ## Dependencies
 
-* https://github.com/stepancheg/grpc-rust
-* https://github.com/sfackler/r2d2
+* https://github.com/hyperium/tonic
+* https://github.com/importcjj/mobc
 * https://github.com/seanmonstar/warp
 
 ## Inspiration
@@ -11,6 +11,7 @@
 * https://github.com/LightningPeach/lnd-rust
 * https://github.com/launchbadge/hedera-sdk-rust
 * https://github.com/conscott/get-lightning-paid
+* https://blog.logrocket.com/create-an-async-crud-web-service-in-rust-with-warp/
 
 ## License
 
