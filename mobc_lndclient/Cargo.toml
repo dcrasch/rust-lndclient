@@ -1,12 +1,12 @@
 [package]
-name = "r2d2_lndclient"
+name = "mobc_lndclient"
 version = "0.1.0"
-authors = ["David Rasch <david@bigdatahub.com>"]
+authors = ["David Rasch <dcrasch@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow="1.0"
-r2d2="0.8"
-rust_lndclient= {path="../rust_lndclient"}
+mobc = "0.5"
+rust_lndclient = {path="../rust_lndclient"}
+anyhow = "1.0"

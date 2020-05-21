@@ -1,4 +1,5 @@
 use futures::StreamExt;
+use futures::executor::{block_on};
 use std::convert::Infallible;
 use std::time::Duration;
 use tokio::time::interval;
@@ -11,7 +12,7 @@ pub fn invoice_events(
     ls: lnd_service::LightningService,
 ) -> impl Stream<Item = Result<impl ServerSentEvent, Infallible>> {
     interval(Duration::from_secs(2)).map(move |_| {
-        let status = ls.lookup(check.r_hash.as_ref().unwrap());
+        let status = block_on(ls.lookup(check.r_hash.as_ref().unwrap()));
         Ok(warp::sse::json(status.clone()))
     })
 }
