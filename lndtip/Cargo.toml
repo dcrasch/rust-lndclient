@@ -1,7 +1,7 @@
 [package]
 name = "lndtip"
 version = "0.1.0"
-authors = ["David Rasch <david@bigdatahub.com>"]
+authors = ["David Rasch <dcrasch@gmail.com>"]
 edition = "2018"
 
 [dependencies]
