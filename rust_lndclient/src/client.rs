@@ -93,8 +93,11 @@ impl LndClient {
             r_hash: r_hash.into(),
             ..lnrpc::PaymentHash::default()
         });
-        let resp = self.lightningclient.lookup_invoice(req).await?;
-        Ok(resp.into_inner())
+        //return Ok(lnrpc::Invoice::default());
+        match self.lightningclient.lookup_invoice(req).await {
+            Ok(resp) => Ok(resp.into_inner()),
+            _ => Ok(lnrpc::Invoice::default()),
+        }
     }
 
     pub async fn list_invoice(
