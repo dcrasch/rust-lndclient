@@ -3,6 +3,10 @@ use mobc_lndclient::LightningConnectionManager;
 use mobc_lndclient::mobc::Pool;
 use serde::{Deserialize, Serialize};
 
+use std::time::Duration;
+use tokio::time::interval;
+use futures::{Stream, StreamExt};
+use futures::executor::{block_on};
 #[derive(Clone)]
 pub struct LightningService {
     lnc: Pool<LightningConnectionManager>,
@@ -49,6 +53,22 @@ impl LightningService {
             settled: false,
         }
     }
+
+    /*
+    pub async fn status_stream(&self, r_hash: &str) -> impl Stream<Item=InvoiceStatus> {
+        let mut conn = self.lnc.get().await.unwrap();
+        let r_hash = base64::decode(r_hash).unwrap();
+        interval(Duration::from_secs(2)).map(move |_| async {
+            let x = conn.lookup_invoice(r_hash.as_slice()).await;
+            println!("{:?}",x);
+            InvoiceStatus {
+                status: "notfound".to_string(),
+                expiry: 0,
+                settled: false,
+            }       
+        }).await
+    }
+    */
 }
 
 #[derive(Deserialize)]

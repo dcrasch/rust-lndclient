@@ -9,8 +9,9 @@ pub fn invoices(
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     invoice_create(ld.clone())
         .or(invoice_check(ld.clone()))
-        .or(invoice_watch(ld.clone()))
+  //      .or(invoice_watch(ld.clone()))
 }
+
 
 pub fn invoice_create(
     ls: lnd_service::LightningService,
@@ -33,6 +34,7 @@ pub fn invoice_check(
         .and_then(lnd_handlers::status_invoice)
 }
 
+/*
 pub fn invoice_watch(
     ls: lnd_service::LightningService,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
@@ -44,6 +46,7 @@ pub fn invoice_watch(
             warp::sse::reply(warp::sse::keep_alive().stream(lnd_sse::invoice_events(c, l)))
         })
 }
+*/
 
 fn with_ls(
     ls: lnd_service::LightningService,
