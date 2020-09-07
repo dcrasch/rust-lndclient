@@ -57,10 +57,10 @@ impl LndClient {
             .ca_certificate(ca)
             .domain_name("localhost"); // self signed
         let channel = Channel::from_shared(format!("http://{}:{}", host, port))?
-            .tls_config(tls)
+            .tls_config(tls)?
             .connect()
             .await?;
-
+        eprintln!("created connection");
         let token = MetadataValue::from_str(&macaroon)?;
 
         let lightningclient =
@@ -68,6 +68,7 @@ impl LndClient {
                 req.metadata_mut().insert("macaroon", token.clone());
                 Ok(req)
             });
+
         let walletunlockerclient = WalletUnlockerClient::new(channel);
         Ok(Self {
             macaroon,

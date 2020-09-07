@@ -9,7 +9,7 @@ pub fn invoices(
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     invoice_create(ld.clone())
         .or(invoice_check(ld.clone()))
-  //      .or(invoice_watch(ld.clone()))
+        .or(invoice_watch(ld.clone()))
 }
 
 
@@ -19,7 +19,7 @@ pub fn invoice_create(
     warp::path!("createinvoice")
         .and(warp::post())
         .and(json_body())
-        //.and(warp::query::<lnd_service::InvoiceRequest>())
+        //and(warp::query::<lnd_service::InvoiceRequest>())
         .and(with_ls(ls))
         .and_then(lnd_handlers::create_invoice)
 }
@@ -28,13 +28,12 @@ pub fn invoice_check(
     ls: lnd_service::LightningService,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::path!("checkinvoice")
-        .and(warp::post())
-        .and(json_body2())
+        //.and(warp::post()).and(json_body2())
+        .and(warp::get()).and(warp::query::<lnd_service::CheckOptions>())
         .and(with_ls(ls))
         .and_then(lnd_handlers::status_invoice)
 }
 
-/*
 pub fn invoice_watch(
     ls: lnd_service::LightningService,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
@@ -43,10 +42,10 @@ pub fn invoice_watch(
         .and(warp::query::<lnd_service::CheckOptions>())
         .and(with_ls(ls))
         .map(move |c, l| {
-            warp::sse::reply(warp::sse::keep_alive().stream(lnd_sse::invoice_events(c, l)))
+            let stream = lnd_sse::invoice_events(c, l);
+            warp::sse::reply(warp::sse::keep_alive().stream(stream))
         })
 }
-*/
 
 fn with_ls(
     ls: lnd_service::LightningService,

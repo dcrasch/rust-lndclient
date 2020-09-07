@@ -41,7 +41,7 @@ async fn main() {
     })
     .unwrap();
 
-    let pool = Pool::builder().build(manager);
+    let pool = Pool::builder().max_open(1).build(manager);
 
     let lnds = lnd_service::LightningService::new(pool);
     let api = lnd_filters::invoices(lnds);

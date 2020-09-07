@@ -9,7 +9,7 @@ use futures::{Stream, StreamExt};
 use futures::executor::{block_on};
 #[derive(Clone)]
 pub struct LightningService {
-    lnc: Pool<LightningConnectionManager>,
+    pub lnc: Pool<LightningConnectionManager>,
 }
 
 impl LightningService {
@@ -38,6 +38,7 @@ impl LightningService {
 
     pub async fn lookup(&self, r_hash: &str) -> InvoiceStatus {
         let mut conn = self.lnc.get().await.unwrap();
+        eprintln!("got connection\n");
         if let Ok(r_hash) = base64::decode(r_hash) {
             if let Ok(invoice) = conn.lookup_invoice(r_hash.as_slice()).await {
                 return InvoiceStatus {
@@ -54,21 +55,6 @@ impl LightningService {
         }
     }
 
-    /*
-    pub async fn status_stream(&self, r_hash: &str) -> impl Stream<Item=InvoiceStatus> {
-        let mut conn = self.lnc.get().await.unwrap();
-        let r_hash = base64::decode(r_hash).unwrap();
-        interval(Duration::from_secs(2)).map(move |_| async {
-            let x = conn.lookup_invoice(r_hash.as_slice()).await;
-            println!("{:?}",x);
-            InvoiceStatus {
-                status: "notfound".to_string(),
-                expiry: 0,
-                settled: false,
-            }       
-        }).await
-    }
-    */
 }
 
 #[derive(Deserialize)]
@@ -89,7 +75,7 @@ pub struct CheckOptions {
     pub r_hash: Option<String>,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct InvoiceStatus {
     pub status: String,
     pub settled: bool,

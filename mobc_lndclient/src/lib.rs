@@ -31,13 +31,14 @@ impl Manager for LightningConnectionManager {
    type Error = anyhow::Error;
 
    async fn connect(&self) -> Result<Self::Connection, Self::Error> {
+       eprintln!("build new connection mobc");
        let client = LndClient::builder(
             self.connection_info.host.clone(),
             self.connection_info.cert.clone(),
             self.connection_info.macaroon.clone(),
         )?;
-       let res = client.build().await;
-       res
+       let res = client.build().await?;
+       Ok(res)
    }
 
    async fn check(&self, conn: Self::Connection) -> Result<Self::Connection, Self::Error> {
