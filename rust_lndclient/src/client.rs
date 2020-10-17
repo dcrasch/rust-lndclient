@@ -36,9 +36,9 @@ impl LndClient {
         macaroon: String,
     ) -> Result<ClientBuilder, Error> {
         Ok(ClientBuilder {
-            address: address,
-            certificate: certificate,
-            macaroon: macaroon,
+            address,
+            certificate,
+            macaroon,
         })
     }
 
@@ -101,14 +101,19 @@ impl LndClient {
         }
     }
 
-    pub async fn list_invoice(
+    pub async fn list_invoices(
         &mut self,
         pending_only: bool,
         index_offset: u64,
         num_max_invoices: u64,
         reversed: bool,
     ) -> Result<lnrpc::ListInvoiceResponse, Error> {
-        let req = tonic::Request::new(lnrpc::ListInvoiceRequest::default());
+        let req = tonic::Request::new(lnrpc::ListInvoiceRequest {
+            pending_only,
+            index_offset,
+            num_max_invoices,
+            reversed,
+        });
         let resp = self.lightningclient.list_invoices(req).await?;
         Ok(resp.into_inner())
     }
@@ -122,7 +127,7 @@ impl LndClient {
         let req = tonic::Request::new(lnrpc::Invoice {
             value: satoshi,
             memo: memo.to_string(),
-            expiry: expiry,
+            expiry,
             ..lnrpc::Invoice::default()
         });
         let resp = self.lightningclient.add_invoice(req).await?;

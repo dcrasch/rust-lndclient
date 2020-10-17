@@ -1,13 +1,11 @@
-use anyhow::Error;
 use futures::executor::block_on;
-use futures::{Stream, StreamExt, TryStreamExt};
+use futures::{Stream, StreamExt};
 use std::time::Duration;
 use tokio::time::interval;
 
 use rust_lndclient::client::LndClient;
 use serde::Deserialize;
 use std::fs;
-use toml;
 
 #[derive(Clone, Debug)]
 pub struct InvoiceStatus {
@@ -27,7 +25,7 @@ pub fn invoice_events(
     r_hash: &[u8],
     mut client: LndClient,
 ) -> impl Stream<Item = InvoiceStatus> + '_ {
-    interval(Duration::from_secs(2)).map(move |t| {
+    interval(Duration::from_secs(2)).map(move |_| {
         if let Ok(invoice) = block_on(client.lookup_invoice(r_hash)) {
             InvoiceStatus {
                 status: format!("{:?}", invoice.state),
@@ -52,7 +50,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = LndClient::builder(lndconfig.host, lndconfig.cert, lndconfig.macaroon)?
         .build()
         .await?;
-    if let Ok(invoices) = client.list_invoice(false, 9, 8888888, false).await {
+    if let Ok(invoices) = client.list_invoices(false, 9, 8888888, false).await {
         if let Some(last_invoice) = invoices.invoices.last() {
             let mut stream = invoice_events(last_invoice.r_hash.as_ref(), client);
             while let Some(e) = stream.next().await {

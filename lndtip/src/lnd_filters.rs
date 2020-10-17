@@ -60,10 +60,3 @@ fn json_body(
     // (and to reject huge payloads)...
     warp::body::content_length_limit(1024 * 16).and(warp::body::json())
 }
-
-fn json_body2(
-) -> impl Filter<Extract = (lnd_service::CheckOptions,), Error = warp::Rejection> + Clone {
-    // When accepting a body, we want a JSON body
-    // (and to reject huge payloads)...
-    warp::body::content_length_limit(1024 * 16).and(warp::body::json())
-}

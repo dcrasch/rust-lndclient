@@ -1,8 +1,7 @@
 pub extern crate mobc;
 
-use mobc::{Manager, Pool, async_trait};
+use mobc::{Manager, async_trait};
 use rust_lndclient::client::LndClient;
-use anyhow;
 
 
 #[derive(Debug)]

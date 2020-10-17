@@ -1,12 +1,7 @@
-use base64;
 use mobc_lndclient::mobc::Pool;
 use mobc_lndclient::LightningConnectionManager;
 use serde::{Deserialize, Serialize};
 
-use futures::executor::block_on;
-use futures::{Stream, StreamExt};
-use std::time::Duration;
-use tokio::time::interval;
 #[derive(Clone)]
 pub struct LightningService {
     pub lnc: Pool<LightningConnectionManager>,
@@ -14,7 +9,7 @@ pub struct LightningService {
 
 impl LightningService {
     pub fn new(lnc: Pool<LightningConnectionManager>) -> Self {
-        Self { lnc: lnc }
+        Self { lnc }
     }
 
     pub async fn add_invoice(
@@ -31,7 +26,7 @@ impl LightningService {
             {
                 let r_hash = base64::encode(invoice.r_hash);
                 return InvoiceResponse {
-                    r_hash: r_hash,
+                    r_hash,
                     expiry: invoice.expiry,
                     bolt11: invoice.payment_request,
                 };
