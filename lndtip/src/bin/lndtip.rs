@@ -6,8 +6,8 @@ use warp::Filter;
 use lndtip::lnd_filters;
 use lndtip::lnd_service;
 
-use r2d2_lndclient::lnd_pool::{LightningConnectionInfo, LightningConnectionManager};
-use r2d2_lndclient::r2d2;
+use mobc_lndclient::mobc::Pool;
+use mobc_lndclient::{LightningConnectionInfo, LightningConnectionManager};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -41,7 +41,7 @@ async fn main() {
     })
     .unwrap();
 
-    let pool = r2d2::Pool::builder().build(manager).unwrap();
+    let pool = Pool::builder().max_open(1).build(manager);
 
     let lnds = lnd_service::LightningService::new(pool);
     let api = lnd_filters::invoices(lnds);

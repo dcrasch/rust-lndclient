@@ -1,11 +1,15 @@
 use base64;
-use r2d2_lndclient::lnd_pool::LightningConnectionManager;
-use r2d2_lndclient::r2d2::Pool;
+use mobc_lndclient::mobc::Pool;
+use mobc_lndclient::LightningConnectionManager;
 use serde::{Deserialize, Serialize};
 
+use futures::executor::block_on;
+use futures::{Stream, StreamExt};
+use std::time::Duration;
+use tokio::time::interval;
 #[derive(Clone)]
 pub struct LightningService {
-    lnc: Pool<LightningConnectionManager>,
+    pub lnc: Pool<LightningConnectionManager>,
 }
 
 impl LightningService {
@@ -13,10 +17,18 @@ impl LightningService {
         Self { lnc: lnc }
     }
 
-    pub fn add_invoice(&self, satoshi: i64, description: &str, expiry: i64) -> InvoiceResponse {
-        let conn = self.lnc.get().unwrap();
-        if let Ok(invoice_response) = conn.add_invoice(satoshi, description, expiry) {
-            if let Ok(invoice) = conn.lookup_invoice(invoice_response.r_hash.as_slice()) {
+    pub async fn add_invoice(
+        &self,
+        satoshi: i64,
+        description: &str,
+        expiry: i64,
+    ) -> InvoiceResponse {
+        let mut conn = self.lnc.get().await.unwrap();
+        if let Ok(invoice_response) = conn.add_invoice(satoshi, description, expiry).await {
+            if let Ok(invoice) = conn
+                .lookup_invoice(invoice_response.r_hash.as_slice())
+                .await
+            {
                 let r_hash = base64::encode(invoice.r_hash);
                 return InvoiceResponse {
                     r_hash: r_hash,
@@ -32,10 +44,10 @@ impl LightningService {
         }
     }
 
-    pub fn lookup(&self, r_hash: &str) -> InvoiceStatus {
-        let conn = self.lnc.get().unwrap();
+    pub async fn lookup(&self, r_hash: &str) -> InvoiceStatus {
+        let mut conn = self.lnc.get().await.unwrap();
         if let Ok(r_hash) = base64::decode(r_hash) {
-            if let Ok(invoice) = conn.lookup_invoice(r_hash.as_slice()) {
+            if let Ok(invoice) = conn.lookup_invoice(r_hash.as_slice()).await {
                 return InvoiceStatus {
                     status: format!("{:?}", invoice.state),
                     settled: invoice.settled,
@@ -69,7 +81,7 @@ pub struct CheckOptions {
     pub r_hash: Option<String>,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct InvoiceStatus {
     pub status: String,
     pub settled: bool,

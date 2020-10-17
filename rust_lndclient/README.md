@@ -25,22 +25,13 @@ macaroon="ABCD00.."
 cargo run
 ```
 
-## Hacks for grpc under windows
+## Tips
 
-httpbis-0.8.0\src\socket.rs:103:10
-```
-Pin<Box<dyn Future<Output = io::Result<Pin<Box<dyn StreamItem + Send>>>> + Send>> 
-```
+Get cn hostname from certificate
 
-\grpc\src\client_stub.rs:58:15
+```shell
+openssl x509 -noout -subject -in tls.cert
 ```
-#[cfg(not(unix))]
-    fn new_plain_unix(addr: &str, conf: ClientConf) -> grpc_Result<Self> {
-        unimplemented!("new plain unix not implemented");      
-    }
-```
-
-Send patch or use https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section
 
 ## License
 

@@ -137,7 +137,7 @@ function getInvoice() {
 }
 
 function listenInvoiceSettled(rHash) {
-    try {
+     try {
         var eventSrc = new EventSource(requestUrl + "watchinvoice?r_hash="+encodeURIComponent(rHash));
 
         eventSrc.onmessage = function (event) {
@@ -150,7 +150,7 @@ function listenInvoiceSettled(rHash) {
             }
         };
 
-    } catch (e) {
+    } catch (e) { 
         console.error(e);
         console.warn("Your browser does not support EventSource. Sending a request to the server every two second to check if the invoice settled");
        
@@ -188,7 +188,6 @@ function listenInvoiceSettled(rHash) {
 
         }, 2000);
     }
-
 }
 
 function showThankYouScreen() {

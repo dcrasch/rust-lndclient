@@ -1,6 +1,6 @@
 [workspace]
 members = [
 	"rust_lndclient",
-	"r2d2_lndclient",
+	"mobc_lndclient",
 	"lndtip"
 	]
