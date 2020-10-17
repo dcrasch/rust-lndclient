@@ -12,7 +12,6 @@ pub fn invoices(
         .or(invoice_watch(ld.clone()))
 }
 
-
 pub fn invoice_create(
     ls: lnd_service::LightningService,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
@@ -29,7 +28,8 @@ pub fn invoice_check(
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::path!("checkinvoice")
         //.and(warp::post()).and(json_body2())
-        .and(warp::get()).and(warp::query::<lnd_service::CheckOptions>())
+        .and(warp::get())
+        .and(warp::query::<lnd_service::CheckOptions>())
         .and(with_ls(ls))
         .and_then(lnd_handlers::status_invoice)
 }

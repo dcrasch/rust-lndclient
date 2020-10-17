@@ -6,8 +6,8 @@ use warp::Filter;
 use lndtip::lnd_filters;
 use lndtip::lnd_service;
 
+use mobc_lndclient::mobc::Pool;
 use mobc_lndclient::{LightningConnectionInfo, LightningConnectionManager};
-use mobc_lndclient::mobc::{Pool};
 use serde::Deserialize;
 
 #[derive(Deserialize)]

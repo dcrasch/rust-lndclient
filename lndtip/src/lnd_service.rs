@@ -1,12 +1,12 @@
 use base64;
-use mobc_lndclient::LightningConnectionManager;
 use mobc_lndclient::mobc::Pool;
+use mobc_lndclient::LightningConnectionManager;
 use serde::{Deserialize, Serialize};
 
+use futures::executor::block_on;
+use futures::{Stream, StreamExt};
 use std::time::Duration;
 use tokio::time::interval;
-use futures::{Stream, StreamExt};
-use futures::executor::{block_on};
 #[derive(Clone)]
 pub struct LightningService {
     pub lnc: Pool<LightningConnectionManager>,
@@ -17,10 +17,18 @@ impl LightningService {
         Self { lnc: lnc }
     }
 
-    pub async fn add_invoice(&self, satoshi: i64, description: &str, expiry: i64) -> InvoiceResponse {
+    pub async fn add_invoice(
+        &self,
+        satoshi: i64,
+        description: &str,
+        expiry: i64,
+    ) -> InvoiceResponse {
         let mut conn = self.lnc.get().await.unwrap();
         if let Ok(invoice_response) = conn.add_invoice(satoshi, description, expiry).await {
-            if let Ok(invoice) = conn.lookup_invoice(invoice_response.r_hash.as_slice()).await {
+            if let Ok(invoice) = conn
+                .lookup_invoice(invoice_response.r_hash.as_slice())
+                .await
+            {
                 let r_hash = base64::encode(invoice.r_hash);
                 return InvoiceResponse {
                     r_hash: r_hash,
@@ -38,7 +46,6 @@ impl LightningService {
 
     pub async fn lookup(&self, r_hash: &str) -> InvoiceStatus {
         let mut conn = self.lnc.get().await.unwrap();
-        eprintln!("got connection\n");
         if let Ok(r_hash) = base64::decode(r_hash) {
             if let Ok(invoice) = conn.lookup_invoice(r_hash.as_slice()).await {
                 return InvoiceStatus {
@@ -54,7 +61,6 @@ impl LightningService {
             settled: false,
         }
     }
-
 }
 
 #[derive(Deserialize)]
