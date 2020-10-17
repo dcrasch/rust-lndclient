@@ -13,14 +13,15 @@ pub fn invoice_events(
 ) -> impl Stream<Item = Result<impl ServerSentEvent, Infallible>> {
     let r_hash: String = check.r_hash.unwrap().to_owned();
 
-    let (tx, rx) = mpsc::channel();
+    let (tx, rx) = mpsc::unbounded_channel();
 
     tokio::spawn(async move {
         loop {
             let status = ls.lookup(&r_hash).await;
-            tx.send(status);
-            tokio::time::delay_for(Duration::from_secs(2)).await;
-            println!("look up");
+            if let Err(_) = tx.send(status) {
+		break;
+	    }
+	    tokio::time::delay_for(Duration::from_secs(2)).await;
         }
     });
     rx.map(|status| Ok(warp::sse::json(status.clone())))
