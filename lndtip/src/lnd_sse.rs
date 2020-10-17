@@ -13,7 +13,7 @@ pub fn invoice_events(
 ) -> impl Stream<Item = Result<impl ServerSentEvent, Infallible>> {
     let r_hash: String = check.r_hash.unwrap().to_owned();
 
-    let (tx, rx) = mpsc::unbounded_channel();
+    let (tx, rx) = mpsc::channel();
 
     tokio::spawn(async move {
         loop {
