@@ -14,23 +14,23 @@ var defaultGetInvoice;
 // Shortest invoice: 194 characters
 // Longest invoice: 1223 characters (as far as I know)
 var qrCodeDataCapacities = [
-    {"typeNumber": 9, "capacity": 230},
-    {"typeNumber": 10, "capacity": 271},
-    {"typeNumber": 11, "capacity": 321},
-    {"typeNumber": 12, "capacity": 367},
-    {"typeNumber": 13, "capacity": 425},
-    {"typeNumber": 14, "capacity": 458},
-    {"typeNumber": 15, "capacity": 520},
-    {"typeNumber": 16, "capacity": 586},
-    {"typeNumber": 17, "capacity": 644},
-    {"typeNumber": 18, "capacity": 718},
-    {"typeNumber": 19, "capacity": 792},
-    {"typeNumber": 20, "capacity": 858},
-    {"typeNumber": 21, "capacity": 929},
-    {"typeNumber": 22, "capacity": 1003},
-    {"typeNumber": 23, "capacity": 1091},
-    {"typeNumber": 24, "capacity": 1171},
-    {"typeNumber": 25, "capacity": 1273}
+    { "typeNumber": 9, "capacity": 230 },
+    { "typeNumber": 10, "capacity": 271 },
+    { "typeNumber": 11, "capacity": 321 },
+    { "typeNumber": 12, "capacity": 367 },
+    { "typeNumber": 13, "capacity": 425 },
+    { "typeNumber": 14, "capacity": 458 },
+    { "typeNumber": 15, "capacity": 520 },
+    { "typeNumber": 16, "capacity": 586 },
+    { "typeNumber": 17, "capacity": 644 },
+    { "typeNumber": 18, "capacity": 718 },
+    { "typeNumber": 19, "capacity": 792 },
+    { "typeNumber": 20, "capacity": 858 },
+    { "typeNumber": 21, "capacity": 929 },
+    { "typeNumber": 22, "capacity": 1003 },
+    { "typeNumber": 23, "capacity": 1091 },
+    { "typeNumber": 24, "capacity": 1171 },
+    { "typeNumber": 25, "capacity": 1273 }
 ];
 
 // TODO: solve this without JavaScript
@@ -53,8 +53,10 @@ function getInvoice() {
 
         if (tipValue.value !== "") {
             if (!isNaN(tipValue.value)) {
-                var data = JSON.stringify({"satoshi": parseInt(tipValue.value), 
-                "description": document.getElementById("lightningTipMessage").innerText});
+                var data = JSON.stringify({
+                    "satoshi": parseInt(tipValue.value),
+                    "description": document.getElementById("lightningTipMessage").innerText
+                });
 
                 var request = new XMLHttpRequest();
 
@@ -87,7 +89,7 @@ function getInvoice() {
                                     "<a id='lightningTipExpiry'></a>" +
                                     "</div>";
 
-                                starTimer(json.expiry, document.getElementById("lightningTipExpiry"));
+                                startTimer(json.expiry, document.getElementById("lightningTipExpiry"));
 
                                 // Fixes bug which caused the content of #lightningTipTools to be visually outside of #lightningTip
                                 document.getElementById("lightningTipTools").style.height = document.getElementById("lightningTipCopy").clientHeight + "px";
@@ -137,57 +139,18 @@ function getInvoice() {
 }
 
 function listenInvoiceSettled(rHash) {
-     try {
-        var eventSrc = new EventSource(requestUrl + "watchinvoice?r_hash="+encodeURIComponent(rHash));
+    var eventSrc = new EventSource(requestUrl + "watchinvoice?r_hash=" + encodeURIComponent(rHash));
 
-        eventSrc.onmessage = function (event) {
-	    var json = JSON.parse(event.data);
-	    
-            if (json.settled) {
-                console.log("Invoice settled");
-                eventSrc.close();
-                showThankYouScreen();
-            }
-        };
+    eventSrc.onmessage = function (event) {
+        var json = JSON.parse(event.data);
 
-    } catch (e) { 
-        console.error(e);
-        console.warn("Your browser does not support EventSource. Sending a request to the server every two second to check if the invoice settled");
-       
+        if (json.settled) {
+            console.log("Invoice settled");
+            eventSrc.close();
+            showThankYouScreen();
+        }
+    };
 
-        var interval = setInterval(function () {
-            if (!requestPending) {
-                requestPending = true;
-
-                var request = new XMLHttpRequest();
-
-                request.onreadystatechange = function () {
-                    if (request.readyState === 4) {
-                        if (request.status === 200) {
-                            var json = JSON.parse(request.responseText);
-
-                            if (json.settled) {
-                                console.log("Invoice settled");
-
-                                clearInterval(interval);
-
-                                showThankYouScreen();
-                            }
-
-                        }
-
-                        requestPending = false;
-                    }
-
-                };
-
-                request.open("POST", requestUrl + "checkinvoice", true);
-                request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-                request.send(JSON.stringify({"r_hash": rHash}));
-            }
-
-        }, 2000);
-    }
 }
 
 function showThankYouScreen() {
@@ -197,7 +160,7 @@ function showThankYouScreen() {
     wrapper.innerHTML += "<a id='lightningTipFinished'>Thank you for your tip!</a>";
 }
 
-function starTimer(duration, element) {
+function startTimer(duration, element) {
     showTimer(duration, element);
 
     var interval = setInterval(function () {
