@@ -8,7 +8,6 @@ pub fn invoices(
     ld: lnd_service::LightningService,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     invoice_create(ld.clone())
-        .or(invoice_check(ld.clone()))
         .or(invoice_watch(ld.clone()))
 }
 
