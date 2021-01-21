@@ -83,6 +83,15 @@ pub struct InvoiceStatus {
     pub expiry: i64,
 }
 
+/*
+impl From<InvoiceStatus> for String {
+    fn from(invoice: InvoiceStatus) -> Self {
+	let tmp = serde_json::to_string(&invoice).unwrap();
+	tmp
+    }
+}
+*/
+
 #[derive(Deserialize)]
 pub struct InvoiceError {
     pub error: String,
