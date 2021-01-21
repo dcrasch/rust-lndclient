@@ -3,6 +3,6 @@ members = [
 	"rust_lndclient",
 	"mobc_lndclient",
 	"lndtip",
-	"lndspin",
+	"lndrad",
 	"lndwithdrawal",
 	]

@@ -1,5 +1,5 @@
 [package]
-name = "lndspin"
+name = "lndrad"
 version = "0.1.0"
 authors = ["David Rasch <dcrasch@gmail.com>"]
 edition = "2018"
