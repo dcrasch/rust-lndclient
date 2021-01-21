@@ -5,6 +5,13 @@
 * https://github.com/hyperium/tonic
 * https://github.com/importcjj/mobc
 * https://github.com/seanmonstar/warp
+* https://tokio.rs/
+
+## TODO
+
+[x] Lndtip
+[ ] Lndwithdrawal using lnurl
+[ ] lndrad
 
 ## Inspiration
 
@@ -17,7 +24,7 @@
 
 Rust LN
 
-Copyright(c) 2020 David Rasch
+Copyright(c) 2020,2021 David Rasch
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License (GPL) as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
 
