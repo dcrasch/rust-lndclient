@@ -1,9 +1,7 @@
-use anyhow::Error;
 use serde::Deserialize;
 use std::fs;
 use mobc_lndclient::{LightningConnectionInfo,LightningConnectionManager};
 use mobc_lndclient::mobc::{Pool};
-
 #[derive(Deserialize)]
 pub struct LndConfig {
     host: String,
@@ -12,7 +10,7 @@ pub struct LndConfig {
 }
 
 #[tokio::main]
-pub async fn main() -> Result<(), Error> {
+async fn main() {
     let filecontents = fs::read_to_string("lndtip.toml").expect("Error lndtip.toml");
     let config: LndConfig = toml::from_str(&filecontents).expect("Error parsing config");
 
@@ -42,6 +40,4 @@ pub async fn main() -> Result<(), Error> {
 	    }
         }
     }
-
-    Ok(())
 }

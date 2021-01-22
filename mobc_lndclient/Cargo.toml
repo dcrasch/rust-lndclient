@@ -7,10 +7,10 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-mobc = "0.5"
+mobc = "0.7"
 rust_lndclient = {path="../rust_lndclient"}
 anyhow = "1.0"
 toml = "0.5"
 futures = { version = "0.3", default-features = false, features = ["alloc","executor"] }
-tokio = { version = "0.2", features = ["macros","stream","time"] }
+tokio = { version = "1", features=["full"]}
 serde = { version = "1.0", features = ["derive"] }

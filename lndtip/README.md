@@ -21,6 +21,21 @@ macaroon="ABCD00.."
 * [x] implement server side events
 * [ ] implement lnd_client::IntoConnectionInfo to load config
 
+## Frontend DEBUG
+
+Enable in lndtip/src/bin/lndtip.rs
+
+```rust
+    .or(warp::path("frontend").and(warp::fs::dir("frontend"))); // add for debug
+```
+
+```shell
+cd lndtip
+cargo run --bin ldntip
+```
+
+* http://127.0.0.1:3030/frontend/tip.html
+
 ## Api
 
 * http://127.0.0.1:3030/check_invoice?r_hash=abcdef...
