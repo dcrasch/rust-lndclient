@@ -9,9 +9,9 @@
 
 ## TODO
 
-[x] Lndtip
-[ ] Lndwithdrawal using lnurl
-[ ] lndrad
+- [x] Lndtip
+- [ ] Lndwithdrawal using lnurl
+- [ ] lndrad
 
 ## Inspiration
 
